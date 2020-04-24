@@ -62,10 +62,10 @@ func isDigit(ch byte) bool {
 }
 
 func (l *Lexer) skipWhitespace() {
-	if l.ch == '\n' { // TODO: support windows line endings
-		l.line += 1
-	}
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		if l.ch == '\n' {
+			l.line += 1
+		}
 		l.readChar()
 	}
 }

@@ -140,7 +140,7 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 func (p *Parser) parseExpression(precedence int) ast.Expression {
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
-		p.noPrefixParseFnError(p.curToken.Type)
+		p.noPrefixParseFnError(p.curToken.Type, p.curToken.Line)
 		return nil
 	}
 
@@ -446,7 +446,7 @@ func (p *Parser) parseGroupedExpression() ast.Expression {
 	}
 }
 
-func (p *Parser) noPrefixParseFnError(t token.TokenType) {
-	msg := fmt.Sprintf("no prefix parse function for %s found", t)
+func (p *Parser) noPrefixParseFnError(t token.TokenType, line int) {
+	msg := fmt.Sprintf("no prefix parse function for %s found (line %d)", t, line)
 	p.errors = append(p.errors, msg)
 }

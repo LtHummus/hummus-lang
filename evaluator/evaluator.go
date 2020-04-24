@@ -15,7 +15,13 @@ var (
 var predefs = map[string]*object.Predef{
 	"print": &object.Predef{
 		Function: func(args ...object.Object) object.Object {
-			fmt.Printf(args[0].Printable())
+			fmt.Print(args[0].Printable())
+			return Null
+		},
+	},
+	"printLine": &object.Predef{
+		Function: func(args ...object.Object) object.Object {
+			fmt.Println(args[0].Printable())
 			return Null
 		},
 	},
@@ -183,7 +189,7 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 		return val
 	}
 
-	return newError("unknown reference: %s", node.Value)
+	return newError("unknown reference on line %d: %s", node.Token.Line, node.Value)
 
 }
 
