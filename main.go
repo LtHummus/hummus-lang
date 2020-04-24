@@ -25,12 +25,12 @@ func main() {
 		if len(p.Errors()) > 0 {
 			for _, e := range p.Errors() {
 				fmt.Println(e)
-				panic("invalid code")
 			}
+			panic("invalid code")
 		}
 
 		res := evaluator.Eval(program, object.NewEnvironment())
-		if res.Type() == object.ErrorObj {
+		if res != nil && res.Type() == object.ErrorObj {
 			fmt.Printf("%s\n", res.Printable())
 			os.Exit(1)
 		}

@@ -257,7 +257,7 @@ if (10 > 1) {
 		},
 		{
 			"foobar",
-			"unknown reference: foobar",
+			"unknown reference on line 1: foobar",
 		},
 	}
 

@@ -1,3 +1,5 @@
-printLine("Hello world!");
+let add = fn(x, y) {
+  return x + y;
+};
 
-
+printLine(add(10, 20));

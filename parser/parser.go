@@ -94,12 +94,12 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 
 	stmt.Value = p.parseExpression(PrecedenceLowest)
 
-	for !p.curTokenIs(token.Semicolon) {
-		if p.curTokenIs(token.Eof) {
-			p.addError("expected ;")
-			return nil
-		}
-		p.nextToken()
+	line := p.curToken.Line
+
+	p.nextToken()
+	if !p.curTokenIs(token.Semicolon) {
+		p.addError(fmt.Sprintf("expected ; on line %d", line))
+		return nil
 	}
 
 	return stmt

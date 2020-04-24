@@ -211,6 +211,9 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	switch fn.(type) {
 	case *object.Function:
 		actual := fn.(*object.Function)
+		if len(actual.Parameters) != len(args) {
+			return newError("incorrect number of arguments: need %d, got %d", len(actual.Parameters), len(args))
+		}
 		extendedEnv := extendFunctionEnv(actual, args)
 		evaluated := Eval(actual.Body, extendedEnv)
 		return unwrapReturnValue(evaluated)
