@@ -114,6 +114,25 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	assert.Equal(t, "5", ident.TokenLiteral())
 }
 
+func TestStringLiteralExpression(t *testing.T) {
+	input := `"hello"`
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	require.Empty(t, p.Errors())
+	require.Len(t, program.Statements, 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	require.Truef(t, ok, "Statement is not ExpressionStatement. Got %T instead", program.Statements[0])
+
+	stringLiteral, ok := stmt.Expression.(*ast.StringLiteral)
+	require.Truef(t, ok, "Not a StringLiteral. Got %T instead", stmt.Expression)
+
+	assert.Equal(t, "hello", stringLiteral.Value)
+}
+
 func TestBooleanLiteralExpression(t *testing.T) {
 	input := "true;"
 

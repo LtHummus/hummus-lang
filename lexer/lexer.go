@@ -70,6 +70,20 @@ func (l *Lexer) skipWhitespace() {
 	}
 }
 
+func (l *Lexer) readString() string {
+	pos := l.position + 1
+	for {
+		l.readChar()
+		if l.ch == '"' {
+			break
+		} else if l.ch == 0 {
+			break //TODO: report error for non-ended string
+		}
+	}
+
+	return l.input[pos:l.position]
+}
+
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
@@ -98,6 +112,9 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.Bang, l.ch, l.line)
 		}
+	case '"':
+		literal := l.readString()
+		tok = token.Token{Type: token.String, Literal: literal, Line: l.line}
 	case '/':
 		tok = newToken(token.Slash, l.ch, l.line)
 	case '*':

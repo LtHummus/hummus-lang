@@ -155,6 +155,15 @@ func TestLetStatement(t *testing.T) {
 	}
 }
 
+func TestLetString(t *testing.T) {
+	input := `let x = "hello"; x;`
+	evaluated := testEval(input)
+	fn, ok := evaluated.(*object.String)
+	require.Truef(t, ok, "object is not a string. got %T (%+v)", evaluated, evaluated)
+
+	assert.Equal(t, "hello", fn.Value)
+}
+
 func TestFunctionObject(t *testing.T) {
 	input := "fn(x) { x + 2; };"
 	evaluated := testEval(input)

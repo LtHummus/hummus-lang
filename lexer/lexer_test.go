@@ -174,6 +174,7 @@ if (5 < 10) {
 
 10 == 10;
 10 != 9;
+"hello"
 `
 
 	tests := []TestCase{
@@ -250,6 +251,7 @@ if (5 < 10) {
 		{token.NotEq, "!="},
 		{token.Int, "9"},
 		{token.Semicolon, ";"},
+		{token.String, "hello"},
 		{token.Eof, ""},
 	}
 

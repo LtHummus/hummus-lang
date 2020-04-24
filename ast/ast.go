@@ -234,6 +234,22 @@ func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
+type StringLiteral struct {
+	Token token.Token
+	Value string
+}
+
+func (sl *StringLiteral) expressionNode() {}
+func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
+func (sl *StringLiteral) String() string {
+	var out bytes.Buffer
+	out.WriteString("\"")
+	out.WriteString(sl.Value)
+	out.WriteString("\"")
+
+	return out.String()
+}
+
 type Identifier struct {
 	Token token.Token
 	Value string
