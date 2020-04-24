@@ -12,6 +12,15 @@ var (
 	False = &object.Boolean{Value: false}
 )
 
+var predefs = map[string]*object.Predef{
+	"print": &object.Predef{
+		Function: func(args ...object.Object) object.Object {
+			fmt.Printf(args[0].Printable())
+			return Null
+		},
+	},
+}
+
 func newError(format string, a ...interface{}) *object.Error {
 	return &object.Error{Message: fmt.Sprintf(format, a...)}
 }
@@ -165,11 +174,17 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
-	if !ok {
-		return newError("unknown reference: %s", node.Value)
-	} else {
+	if ok {
 		return val
 	}
+
+	val, ok = predefs[node.Value]
+	if ok {
+		return val
+	}
+
+	return newError("unknown reference: %s", node.Value)
+
 }
 
 func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Object {
@@ -187,14 +202,22 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
-	function, ok := fn.(*object.Function)
-	if !ok {
-		return newError("applyFunction: not a function: %s", fn.Type())
+	switch fn.(type) {
+	case *object.Function:
+		actual := fn.(*object.Function)
+		extendedEnv := extendFunctionEnv(actual, args)
+		evaluated := Eval(actual.Body, extendedEnv)
+		return unwrapReturnValue(evaluated)
+
+	case *object.Predef:
+		actual := fn.(*object.Predef)
+		return actual.Function(args...)
+
+	default:
+		return newError("applyFunction: unknown function; got %s", fn.Type())
 	}
 
-	extendedEnv := extendFunctionEnv(function, args)
-	evaluated := Eval(function.Body, extendedEnv)
-	return unwrapReturnValue(evaluated)
+
 }
 
 func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
