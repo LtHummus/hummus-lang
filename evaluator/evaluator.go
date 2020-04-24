@@ -108,6 +108,18 @@ func evalIntegerInfixExpression(operator string, left object.Object, right objec
 	}
 }
 
+func evalStringInfixExpression(operator string, left object.Object, right object.Object) object.Object {
+	leftString := left.(*object.String).Value
+	rightString := right.(*object.String).Value
+
+	switch operator {
+	case "+":
+		return &object.String{Value: leftString + rightString}
+	default:
+		return newError("unknown operator: binary %s not defined for `%s` and `%s`", operator, left.Type(), right.Type())
+	}
+}
+
 func evalPrefixExpression(operator string, right object.Object) object.Object {
 	switch operator {
 	case "!":
@@ -121,6 +133,8 @@ func evalPrefixExpression(operator string, right object.Object) object.Object {
 
 func evalInfixExpression(operator string, left object.Object, right object.Object) object.Object {
 	switch {
+	case left.Type() == object.StringObj && right.Type() == object.StringObj:
+		return evalStringInfixExpression(operator, left, right)
 	case left.Type() == object.IntegerObj && right.Type() == object.IntegerObj:
 		return evalIntegerInfixExpression(operator, left, right)
 	case operator == "==":

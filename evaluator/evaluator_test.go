@@ -158,10 +158,19 @@ func TestLetStatement(t *testing.T) {
 func TestLetString(t *testing.T) {
 	input := `let x = "hello"; x;`
 	evaluated := testEval(input)
-	fn, ok := evaluated.(*object.String)
+	str, ok := evaluated.(*object.String)
 	require.Truef(t, ok, "object is not a string. got %T (%+v)", evaluated, evaluated)
 
-	assert.Equal(t, "hello", fn.Value)
+	assert.Equal(t, "hello", str.Value)
+}
+
+func TestStringConcatenation(t *testing.T) {
+	input := `"hello" + " world"`
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+	require.Truef(t, ok, "object is not a string. got %T (%+v)", evaluated, evaluated)
+
+	assert.Equal(t, "hello world", str.Value)
 }
 
 func TestFunctionObject(t *testing.T) {
