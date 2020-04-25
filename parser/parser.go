@@ -111,15 +111,25 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 
 	p.nextToken()
 
-	stmt.ReturnValue = p.parseExpression(PrecedenceLowest)
-
-	for !p.curTokenIs(token.Semicolon) {
-		if p.curTokenIs(token.Eof) {
-			p.addError("expected ;")
-			return nil
+	if p.curTokenIs(token.Semicolon) {
+		stmt.ReturnValue = &ast.IntegerLiteral{
+			//TODO: I don't really like this, but i'm not quite sure what to do about it either
+			Value: 0,
 		}
-		p.nextToken()
+	} else {
+		stmt.ReturnValue = p.parseExpression(PrecedenceLowest)
+
+		//TODO: fix this like I fixed the let statement missing semicolon problem
+		for !p.curTokenIs(token.Semicolon) {
+			if p.curTokenIs(token.Eof) {
+				p.addError("expected ;")
+				return nil
+			}
+			p.nextToken()
+		}
 	}
+
+
 
 	return stmt
 }

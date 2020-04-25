@@ -1,0 +1,6 @@
+let sayHello = fn(name) {
+  printLine(name);
+  return;
+};
+
+sayHello("hummus");

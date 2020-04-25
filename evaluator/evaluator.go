@@ -326,7 +326,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return applyFunction(function, args)
 
 	default:
-		fmt.Printf("WARNING: unknown expression type encountered. Expression type: %T\n", node)
+		fmt.Printf("Eval: unknown expression type encountered. Expression type: %T\n", node)
 	}
 
 	return nil
