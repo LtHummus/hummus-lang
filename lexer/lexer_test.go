@@ -176,6 +176,7 @@ if (5 < 10) {
 10 != 9;
 "hello"
 %
+[1, 2]
 `
 
 	tests := []TestCase{
@@ -254,6 +255,11 @@ if (5 < 10) {
 		{token.Semicolon, ";"},
 		{token.String, "hello"},
 		{token.Percent, "%"},
+		{token.LeftBracket, "["},
+		{token.Int, "1"},
+		{token.Comma, ","},
+		{token.Int, "2"},
+		{token.RightBracket, "]"},
 		{token.Eof, ""},
 	}
 

@@ -274,6 +274,15 @@ if (10 > 1) {
 	}
 }
 
+func TestArrayIndex(t *testing.T) {
+	input := `let x = [1, 2, 3]; x[1];`
+	evaluated, ok := testEval(input).(*object.Integer)
+	require.Truef(t, ok, "error object not returned. got %T (%+v)", evaluated, evaluated)
+
+	assert.Equal(t, int64(2), evaluated.Value)
+
+}
+
 func testEval(input string) object.Object {
 	l := lexer.New(input)
 	p := parser.New(l)

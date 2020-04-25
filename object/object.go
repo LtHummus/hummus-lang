@@ -19,6 +19,7 @@ const (
 	ErrorObj           = "ERROR"
 	FunctionObj        = "FUNCTION"
 	PredefinedFunction = "PREDEFINED_FUNCTION"
+	ArrayObj           = "ARRAY"
 )
 
 type Object interface {
@@ -112,3 +113,37 @@ type Predef struct {
 func (f *Predef) Inspect() string   { return "predefined function" }
 func (f *Predef) Type() ObjectType  { return PredefinedFunction }
 func (f *Predef) Printable() string { return "predefined function" }
+
+type Array struct {
+	Elements []Object
+}
+
+func (a *Array) Inspect() string {
+	stringedExpressions := make([]string, 0)
+
+	for _, curr := range a.Elements {
+		stringedExpressions = append(stringedExpressions, curr.Inspect())
+	}
+
+	var out bytes.Buffer
+	out.WriteString("[")
+	out.WriteString(strings.Join(stringedExpressions, ", "))
+	out.WriteString("]")
+
+	return out.String()
+}
+func (a *Array) Type() ObjectType { return ArrayObj }
+func (a *Array) Printable() string {
+	stringedExpressions := make([]string, 0)
+
+	for _, curr := range a.Elements {
+		stringedExpressions = append(stringedExpressions, curr.Printable())
+	}
+
+	var out bytes.Buffer
+	out.WriteString("[")
+	out.WriteString(strings.Join(stringedExpressions, ", "))
+	out.WriteString("]")
+
+	return out.String()
+}

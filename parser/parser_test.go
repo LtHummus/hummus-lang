@@ -391,6 +391,72 @@ func TestCallExpressionParsing(t *testing.T) {
 	assert.Len(t, exp.Arguments, 3)
 }
 
+func TestArrayLiteralParsing(t *testing.T) {
+	input := "[1, 2, 3, 4, 5];"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	require.Empty(t, p.errors)
+	require.Len(t, program.Statements, 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	require.Truef(t, ok, "Expected ExpressionStatement, got %T instead", program.Statements[0])
+
+	exp, ok := stmt.Expression.(*ast.ArrayLiteral)
+	require.Truef(t, ok, "Expected ArrayLiteral, got %T instead", stmt.Expression)
+
+	assert.Len(t, exp.Elements, 5)
+
+	testIntegerLiteral(t, exp.Elements[0], 1)
+	testIntegerLiteral(t, exp.Elements[1], 2)
+	testIntegerLiteral(t, exp.Elements[2], 3)
+	testIntegerLiteral(t, exp.Elements[3], 4)
+	testIntegerLiteral(t, exp.Elements[4], 5)
+}
+
+func TestEmptyArrayLiteral(t *testing.T) {
+	input := "[];"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	require.Empty(t, p.errors)
+	require.Len(t, program.Statements, 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	require.Truef(t, ok, "Expected ExpressionStatement, got %T instead", program.Statements[0])
+
+	exp, ok := stmt.Expression.(*ast.ArrayLiteral)
+	require.Truef(t, ok, "Expected ArrayLiteral, got %T instead", stmt.Expression)
+
+	assert.Len(t, exp.Elements, 0)
+}
+
+func TestArrayIndexParsing(t *testing.T) {
+	input := `foo[2]`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+
+	require.Empty(t, p.errors)
+	require.Len(t, program.Statements, 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	require.Truef(t, ok, "Expected ExpressionStatement, got %T instead", program.Statements[0])
+
+	exp, ok := stmt.Expression.(*ast.IndexExpression)
+	require.Truef(t, ok, "Expected IndexExpression, got %T instead", stmt.Expression)
+
+	ident, ok := exp.Left.(*ast.Identifier)
+	require.Truef(t, ok, "Expected Identifier, got %T instead", stmt.Expression)
+
+	assert.Equal(t, "foo", ident.Value)
+	testIntegerLiteral(t, exp.Right, 2)
+}
+
 func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) {
 	integ, ok := il.(*ast.IntegerLiteral)
 	if !assert.Truef(t, ok, "il not *ast.IntegerLiteral. got %T instead", il) {

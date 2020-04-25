@@ -25,6 +25,21 @@ var predefs = map[string]*object.Predef{
 			return Null
 		},
 	},
+	"len": &object.Predef{
+		Function: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("len: expected exactly 1 argument. given %d", len(args))
+			}
+			switch x := args[0].(type) {
+			case *object.String:
+				return &object.Integer{Value: int64(len(x.Value))}
+			case *object.Array:
+				return &object.Integer{Value: int64(len(x.Elements))}
+			default:
+				return newError("len: can only take length of strings and arrays")
+			}
+		},
+	},
 }
 
 func newError(format string, a ...interface{}) *object.Error {
@@ -180,6 +195,41 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 	}
 }
 
+func evalIndexExpression(ie *ast.IndexExpression, env *object.Environment) object.Object {
+	leftEval := Eval(ie.Left, env)
+	if isError(leftEval) {
+		return leftEval
+	}
+
+	rightEval := Eval(ie.Right, env)
+	if isError(rightEval) {
+		return rightEval
+	}
+
+	if leftEval.Type() == object.ArrayObj && rightEval.Type() == object.IntegerObj {
+		array := leftEval.(*object.Array).Elements
+		idx := int(rightEval.(*object.Integer).Value)
+
+		if idx < 0 || idx > len(array)-1 {
+			//throw new ArrayIndexOutOfBoundsException()
+			return newError("index expression: index out of array bounds")
+		}
+
+		return array[idx]
+	} else if leftEval.Type() == object.StringObj && rightEval.Type() == object.IntegerObj {
+		str := leftEval.(*object.String).Value
+		idx := int(rightEval.(*object.Integer).Value)
+
+		if idx < 0 || idx > len(str)-1 {
+			return newError("index expression: index out of string bounds")
+		}
+
+		return &object.String{Value: fmt.Sprintf("%c", str[idx])}
+	}
+
+	return newError("index expression: can not take index of type `%s` with `%s`", leftEval.Type(), rightEval.Type())
+}
+
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if ok {
@@ -227,7 +277,6 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	default:
 		return newError("applyFunction: unknown function; got %s", fn.Type())
 	}
-
 
 }
 
@@ -324,6 +373,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return applyFunction(function, args)
+
+	case *ast.ArrayLiteral:
+		elements := evalExpressions(node.Elements, env)
+		if len(elements) == 1 && isError(elements[0]) {
+			return elements[0]
+		}
+
+		return &object.Array{Elements: elements}
+
+	case *ast.IndexExpression:
+		return evalIndexExpression(node, env)
 
 	default:
 		fmt.Printf("Eval: unknown expression type encountered. Expression type: %T\n", node)

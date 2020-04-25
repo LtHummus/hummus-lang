@@ -135,6 +135,10 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LeftBrace, l.ch, l.line)
 	case '}':
 		tok = newToken(token.RightBrace, l.ch, l.line)
+	case '[':
+		tok = newToken(token.LeftBracket, l.ch, l.line)
+	case ']':
+		tok = newToken(token.RightBracket, l.ch, l.line)
 	case '%':
 		tok = newToken(token.Percent, l.ch, l.line)
 	case 0:
