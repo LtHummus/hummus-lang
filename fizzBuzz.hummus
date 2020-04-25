@@ -1,0 +1,26 @@
+let fizzBuzz = fn(n) {
+  if (n == 101) {
+    return 0;
+  }
+  if (n % 15 == 0) {
+    printLine("FizzBuzz");
+    fizzBuzz(n + 1);
+    return 0;
+  };
+  if (n % 5 == 0) {
+    printLine("Buzz");
+    fizzBuzz(n + 1);
+    return 0;
+  };
+  if (n % 3 == 0) {
+    printLine("Fizz");
+    fizzBuzz(n + 1);
+    return 0;
+  };
+
+  printLine(n);
+  fizzBuzz(n + 1);
+};
+
+fizzBuzz(1);
+

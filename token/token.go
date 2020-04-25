@@ -16,6 +16,7 @@ const (
 	Bang     = "!"
 	Asterisk = "*"
 	Slash    = "/"
+	Percent  = "%"
 
 	Eq    = "=="
 	NotEq = "!="

@@ -135,6 +135,8 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LeftBrace, l.ch, l.line)
 	case '}':
 		tok = newToken(token.RightBrace, l.ch, l.line)
+	case '%':
+		tok = newToken(token.Percent, l.ch, l.line)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.Eof

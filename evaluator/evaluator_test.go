@@ -24,6 +24,7 @@ func TestEvalIntegerExpression(t *testing.T) {
 		{"5 * 2 + 10", 20},
 		{"5 + 2 * 10", 25},
 		{"20 * -10", -200},
+		{"15 % 4", 3},
 	}
 
 	for _, tt := range tests {
@@ -141,7 +142,7 @@ if (10 > 1) {
 
 func TestLetStatement(t *testing.T) {
 	tests := []struct {
-		input string
+		input    string
 		expected int64
 	}{
 		{"let a = 5; a;", 5},
@@ -186,8 +187,8 @@ func TestFunctionObject(t *testing.T) {
 }
 
 func TestFunctionApplication(t *testing.T) {
-	tests := []struct{
-		input string
+	tests := []struct {
+		input    string
 		expected int64
 	}{
 		{"let identity = fn(x) { x; }; identity(5);", 5},

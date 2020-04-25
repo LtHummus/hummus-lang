@@ -28,6 +28,7 @@ var precedences = map[token.TokenType]int{
 	token.Minus:     PrecedenceSum,
 	token.Slash:     PrecedenceProduct,
 	token.Asterisk:  PrecedenceProduct,
+	token.Percent:   PrecedenceProduct,
 	token.LeftParen: PrecedenceCall,
 }
 
@@ -365,6 +366,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.Minus, p.parseInfixExpression)
 	p.registerInfix(token.Slash, p.parseInfixExpression)
 	p.registerInfix(token.Asterisk, p.parseInfixExpression)
+	p.registerInfix(token.Percent, p.parseInfixExpression)
 	p.registerInfix(token.Eq, p.parseInfixExpression)
 	p.registerInfix(token.NotEq, p.parseInfixExpression)
 	p.registerInfix(token.Lt, p.parseInfixExpression)
