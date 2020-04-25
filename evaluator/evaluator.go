@@ -40,6 +40,53 @@ var predefs = map[string]*object.Predef{
 			}
 		},
 	},
+	"head": &object.Predef{
+		Function: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("head: expected exactly 1 argument. given %d", len(args))
+			}
+			switch x := args[0].(type) {
+			case *object.Array:
+				if len(x.Elements) == 0 {
+					return newError("head: can not take head of empty array")
+				} else {
+					return x.Elements[0]
+				}
+			case *object.String:
+				if len(x.Value) == 0 {
+					return newError("head: can not take head of empty string")
+				} else {
+					return &object.String{Value: fmt.Sprintf("%c", x.Value[0])}
+				}
+			default:
+				return newError("head: can not take head of `%s`", args[0].Type())
+			}
+		},
+	},
+	"tail": &object.Predef{
+		Function: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("head: expected exactly 1 argument. given %d", len(args))
+			}
+			switch x := args[0].(type) {
+			case *object.Array:
+				if len(x.Elements) == 0 {
+					return newError("tail: can not take tail of empty array")
+				} else {
+					tailElements := x.Elements[1:]
+					return &object.Array{Elements: tailElements}
+				}
+			case *object.String:
+				if len(x.Value) == 0 {
+					return newError("tail: can not take tail of empty string")
+				} else {
+					return &object.String{Value: x.Value[1:]}
+				}
+			default:
+				return newError("head: can not take head of `%s`", args[0].Type())
+			}
+		},
+	},
 }
 
 func newError(format string, a ...interface{}) *object.Error {
